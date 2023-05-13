@@ -1,16 +1,11 @@
 const db = require("../utils/database");
 const { DataTypes } = require("sequelize");
 
-const Roles = db.define(
-  "roles",
+const Categories = db.define(
+  "categories",
   {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    rol: {
-      type: DataTypes.STRING(30),
+    category: {
+      type: DataTypes.STRING(50),
       allowNull: false,
     },
     description: {
@@ -23,4 +18,4 @@ const Roles = db.define(
   }
 );
 
-module.exports = Roles;
+module.exports = Categories;
