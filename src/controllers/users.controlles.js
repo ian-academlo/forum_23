@@ -1,5 +1,6 @@
 const Users = require("../models/users.model");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const createUser = async (req, res) => {
   try {
@@ -53,7 +54,6 @@ const login = async (req, res) => {
     }
 
     // comparar las contraseñas
-    console.log(user.password);
     const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword) {
@@ -61,11 +61,24 @@ const login = async (req, res) => {
         message: "you shall not pass",
       });
     }
-    const { firstname, lastname, id, username, roleId } = user;
+    const { firstname, lastname, id, username, rolId } = user;
 
     // no responder la contraseña
 
-    res.json({ firstname, lastname, id, email, username, roleId });
+    // debemos devolver un token para que el usuario loggeado
+    // pueda acceder a los recursos del back
+
+    // Genear token
+    const userData = { firstname, lastname, id, username, email, rolId };
+
+    const token = jwt.sign(userData, "parangaricutirimucuaro", {
+      algorithm: "HS512",
+      expiresIn: "5m",
+    });
+    // agregar el token en userData
+    userData.token = token;
+
+    res.json(userData);
   } catch (error) {
     res.status(400).json(error);
   }
