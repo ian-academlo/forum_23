@@ -1,5 +1,6 @@
 // check --> verificar/ revisar / chequear / validar
-const { check, validationResult } = require("express-validator");
+const { check } = require("express-validator");
+const validateResult = require("../utils/validate");
 
 const createUserValidator = [
   check("username", "Error con el campo username")
@@ -20,17 +21,33 @@ const createUserValidator = [
     .withMessage("email debe ser un string")
     .isEmail()
     .withMessage("email no tiene formato de correo")
-    .isLength({ min: 10, max: 50 })
+    .isLength()
     .withMessage("El email debe tener minimo 10 caracteres y máximo 50"),
-  (req, res, next) => {
-    try {
-      validationResult(req).throw();
-      return next();
-    } catch (error) {
-      res.status(400).json(error);
-    }
-  },
+  check("password", "Error con el password")
+    .exists()
+    .withMessage("password es obligatorio")
+    .notEmpty()
+    .withMessage("password no puede estar vacio")
+    .isString()
+    .withMessage("El password debe ser un string")
+    .isLength({ min: 8 })
+    .withMessage("El password debe tener minimo 8 caracteres"),
+  validateResult,
+];
+
+const loginUserValidator = [
+  check("email", "Error con el campo email")
+    .exists()
+    .notEmpty()
+    .isEmail()
+    .isLength({ min: 10, max: 50 }),
+  check("password", "Error con el campo password")
+    .exists()
+    .notEmpty()
+    .isString()
+    .isLength({ min: 4 }),
+  validateResult,
 ];
 
 // object.hasOwnProperty('propertyName')
-module.exports = { createUserValidator };
+module.exports = { createUserValidator, loginUserValidator };

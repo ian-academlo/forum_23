@@ -14,20 +14,19 @@ const createUser = async (req, res) => {
   }
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    // validar que el emial exista y sea string
-    // Existe el usuario con email
     const user = await Users.findOne({
       where: { email },
     });
 
     if (!user) {
       // null -> false niego un falso obtengo un verdadero
-      return res.status(400).json({
-        error: "Invalid email",
-        message: "email not exist",
+      return next({
+        status: 400,
+        name: "Invalid email",
+        message: "user not exist",
       });
     }
 
@@ -35,8 +34,10 @@ const login = async (req, res) => {
     const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword) {
-      return res.status(400).json({
-        message: "you shall not pass",
+      return next({
+        status: 400,
+        name: "Invalid password",
+        message: "The password does not match with user email",
       });
     }
     const { firstname, lastname, id, username, rolId } = user;

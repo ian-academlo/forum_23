@@ -4,6 +4,8 @@ const db = require("./utils/database");
 const initModels = require("./models/initModels");
 const userRoutes = require("./routes/users.routes");
 const postRoutes = require("./routes/posts.routes");
+const logError = require("./middlewares/logError.middleware");
+const errorHandler = require("./middlewares/errorHandler.middleware");
 
 initModels();
 
@@ -28,17 +30,19 @@ app.get("/", (req, res) => {
 app.use(userRoutes);
 app.use(postRoutes);
 
+// en los controladores de las rutas se producen los errores
+
+// errorHandlers
+app.use(logError);
+app.use(errorHandler);
+
+// manejar el 404
+app.use("*", (req, res) => {
+  res.status(404).json({
+    message: "El backend se encuentra trabajando, pronto tendremos esta ruta",
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
-
-// No usuarios que pueden hacer?
-// ver - leer
-// get todos los posts por categoria
-// get un post particular
-
-// crear un post necesita autenticación
-// crear una respuesta --> auth
-
-// proteger nuestras rutas
-// nos vamos con todo en middlewares
