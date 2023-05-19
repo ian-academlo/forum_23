@@ -4,29 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const createUser = async (req, res) => {
   try {
-    // validar la información
     const { username, email, password } = req.body;
-    // asegurarse de que no venga vacia
-    if (typeof username !== "string" || !username) {
-      return res.status(400).json({
-        error: "invalid username",
-        message: "Username canot be null or diferent to string",
-      });
-    }
-    if (typeof email !== "string" || !email) {
-      return res.status(400).json({
-        error: "invalid email",
-        message: "email canot be null or diferent to string",
-      });
-    }
-    if (typeof password !== "string" || !password) {
-      return res.status(400).json({
-        error: "invalid password",
-        message: "password canot be null or diferent to string",
-      });
-    }
-
-    // hasheamos la contraseña
     const hashed = await bcrypt.hash(password, 10);
 
     await Users.create({ username, email, password: hashed });
