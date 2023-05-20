@@ -6,6 +6,7 @@ const userRoutes = require("./routes/users.routes");
 const postRoutes = require("./routes/posts.routes");
 const logError = require("./middlewares/logError.middleware");
 const errorHandler = require("./middlewares/errorHandler.middleware");
+const ormErroHandler = require("./middlewares/ormErrorHandler.middleware");
 
 initModels();
 
@@ -30,7 +31,8 @@ app.get("/", (req, res) => {
 app.use(postRoutes);
 app.use(userRoutes);
 
-app.use(logError);
+app.use(logError); // mostramos el error
+app.use(ormErroHandler); // si es error del orm actuamos si no mandamos al general
 app.use(errorHandler);
 
 // manejar el 404

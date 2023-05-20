@@ -2,7 +2,7 @@ const Users = require("../models/users.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const createUser = async (req, res) => {
+const createUser = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
     const hashed = await bcrypt.hash(password, 10);
@@ -10,7 +10,7 @@ const createUser = async (req, res) => {
     await Users.create({ username, email, password: hashed });
     res.status(201).send();
   } catch (error) {
-    res.status(400).json(error);
+    next(error);
   }
 };
 
@@ -59,7 +59,7 @@ const login = async (req, res, next) => {
 
     res.json(userData);
   } catch (error) {
-    res.status(400).json(error);
+    next(error);
   }
 };
 

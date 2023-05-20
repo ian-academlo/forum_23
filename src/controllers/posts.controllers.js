@@ -1,14 +1,16 @@
 const Posts = require("../models/posts.model");
 
-const createPost = async (req, res) => {
+const createPost = async (req, res, next) => {
   try {
     const newPost = req.body;
     await Posts.create(newPost);
     res.status(201).send();
   } catch (error) {
-    res.status(400).json(error);
+    next(error);
   }
 };
+
+// crear un handler exclusivo para sequelize
 
 module.exports = {
   createPost,
