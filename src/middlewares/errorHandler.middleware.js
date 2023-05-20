@@ -7,7 +7,6 @@
 */
 const errorHandler = (err, req, res, next) => {
   // el status puede variar
-  console.log("error handler");
   const { status } = err;
 
   return res.status(status || 500).json({

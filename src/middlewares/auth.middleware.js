@@ -3,12 +3,17 @@ const jwt = require("jsonwebtoken");
 
 const authenticate = (req, res, next) => {
   try {
+    console.log("Iniciando validación");
     // recuperar el token
     const token = req.headers["access-token"];
 
     if (!token) {
-      return res.status(401).json({
-        error: "not token provided",
+      console.log("error en validacion");
+      // ! esto es un error --> next (error)
+      return next({
+        status: 401,
+        name: "no token",
+        message: "Token is not present on request headers",
       });
     }
 
@@ -16,10 +21,17 @@ const authenticate = (req, res, next) => {
       algorithms: "HS512",
     });
 
+    // el token esta expirado
+    // token es invalido
+
     req.user = decoded;
     next();
   } catch (error) {
-    res.status(401).json(error);
+    next({
+      status: 498,
+      name: "invalid or expired token",
+      message: error,
+    });
   }
 };
 

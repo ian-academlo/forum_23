@@ -27,12 +27,9 @@ app.get("/", (req, res) => {
   res.send("Servidor trabajando OK");
 });
 
-app.use(userRoutes);
 app.use(postRoutes);
+app.use(userRoutes);
 
-// en los controladores de las rutas se producen los errores
-
-// errorHandlers
 app.use(logError);
 app.use(errorHandler);
 
