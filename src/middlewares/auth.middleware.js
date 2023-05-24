@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 
 const authenticate = (req, res, next) => {
   try {
-    console.log("Iniciando validación");
     // recuperar el token
     const token = req.headers["access-token"];
 
