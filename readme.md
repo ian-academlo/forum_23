@@ -2,20 +2,7 @@
 
 Esta es una API para un foro creada con node, [express](https://expressjs.com/), sequelize y postgres.
 
-## h2
+## Siguientes pasos
 
-### h3
-
-**negritas**
-
-1. primero
-2. segundo
-3. tercero
-
-### Lista no ordenada
-
-- algo
-- otra cosa
-- lo que sea
-
-* a ver que sale
+1. Un moderador y un administrador pueden cerrar una publicación.
+   > Que nadie más puede realizar comentarios en esa publicación
