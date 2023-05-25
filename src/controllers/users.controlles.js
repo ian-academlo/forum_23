@@ -1,6 +1,7 @@
 const Users = require("../models/users.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const transporter = require("../utils/mailer");
 
 const createUser = async (req, res, next) => {
   try {
@@ -8,7 +9,19 @@ const createUser = async (req, res, next) => {
     const hashed = await bcrypt.hash(password, 10);
 
     await Users.create({ username, email, password: hashed });
+    // de aqui para abajo no se ejecuta si create User tiene un error
+
     res.status(201).send();
+    transporter
+      .sendMail({
+        from: "ian@gmail.com",
+        to: email,
+        subject: "Probando nodemailer",
+        text: "Este seria el mensaje en texto plano",
+        html: "<h1>Bienvenido al foro</h1><p>Espero que contribuyas y aprendas demasiado</p>",
+      })
+      .then(() => console.log("mensaje enviado"))
+      .catch((error) => console.log(error));
   } catch (error) {
     next(error);
   }
