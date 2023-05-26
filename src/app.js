@@ -4,7 +4,6 @@ require("dotenv").config();
 const apiRoutes = require("./routes");
 const errorRoutes = require("./routes/errors.routes");
 const initModels = require("./models/initModels");
-const transporter = require("./utils/mailer");
 
 initModels();
 const app = express();
