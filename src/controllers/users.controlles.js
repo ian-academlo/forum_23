@@ -2,6 +2,7 @@ const Users = require("../models/users.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { sendWelcomeMail } = require("../utils/sendMails");
+require("dotenv").config();
 
 const createUser = async (req, res, next) => {
   try {
@@ -13,7 +14,18 @@ const createUser = async (req, res, next) => {
     await Users.create({ username, email, password: hashed });
     // de aqui para abajo no se ejecuta si create User tiene un error
     res.status(201).send();
-    sendWelcomeMail(email, { username });
+
+    // necesitamos mandar un token para identificar esta acción
+    const verifyToken = jwt.sign(
+      { username, email },
+      process.env.JWT_SECRET_EMAIL_VALIDATION,
+      {
+        algorithm: "HS512",
+        expiresIn: "12h",
+      }
+    );
+
+    sendWelcomeMail(email, { username, verifyToken });
   } catch (error) {
     next(error);
   }
@@ -27,11 +39,18 @@ const login = async (req, res, next) => {
     });
 
     if (!user) {
-      // null -> false niego un falso obtengo un verdadero
       return next({
         status: 400,
         name: "Invalid email",
         message: "user not exist",
+      });
+    }
+
+    if (!user.validUser) {
+      return next({
+        status: 400,
+        name: "email is not verified",
+        message: "User needs verified his/her email",
       });
     }
 
@@ -55,7 +74,7 @@ const login = async (req, res, next) => {
     // Genear token
     const userData = { firstname, lastname, id, username, email, rolId };
 
-    const token = jwt.sign(userData, "parangaricutirimucuaro", {
+    const token = jwt.sign(userData, process.env.JWT_SECRET_LOGIN, {
       algorithm: "HS512",
       expiresIn: "5m",
     });
@@ -68,9 +87,40 @@ const login = async (req, res, next) => {
   }
 };
 
+const validateEmail = async (req, res, next) => {
+  try {
+    const { token } = req.body;
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_EMAIL_VALIDATION, {
+      algorithms: "HS512",
+    });
+    // decoded = {email, username}
+
+    if (!decoded) {
+      next({
+        status: 400,
+        name: "Error de verificación",
+        message: "Algo sucedio con la verificació, solicite nuevamente",
+      });
+    }
+
+    await Users.update(
+      { validUser: true },
+      {
+        where: { email: decoded.email },
+      }
+    );
+
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createUser,
   login,
+  validateEmail,
 };
 
 // alguien esta editando

@@ -6,6 +6,7 @@ const errorRoutes = require("./routes/errors.routes");
 const initModels = require("./models/initModels");
 
 initModels();
+
 const app = express();
 
 app.use(cors());

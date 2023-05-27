@@ -38,6 +38,11 @@ const Users = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    validUser: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      field: "valid_user",
+    },
   },
   {
     timestamps: false,
