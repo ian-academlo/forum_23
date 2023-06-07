@@ -4,8 +4,11 @@ require("dotenv").config();
 const apiRoutes = require("./routes");
 const errorRoutes = require("./routes/errors.routes");
 const initModels = require("./models/initModels");
+const db = require("./utils/database");
 
 initModels();
+
+db.sync();
 
 const app = express();
 
