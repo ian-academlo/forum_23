@@ -1,10 +1,12 @@
 // * jwt
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const authenticate = (req, res, next) => {
   try {
     // recuperar el token
-    const token = req.headers["access-token"];
+    // change authentication with bearer token
+    const token = req.headers.authorization.split(" ")[1];
 
     if (!token) {
       console.log("error en validacion");
@@ -16,7 +18,7 @@ const authenticate = (req, res, next) => {
       });
     }
 
-    const decoded = jwt.verify(token, "parangaricutirimucuaro", {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_LOGIN, {
       algorithms: "HS512",
     });
 
